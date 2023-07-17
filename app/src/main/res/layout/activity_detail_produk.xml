@@ -1,0 +1,81 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Foto Produk -->
+    <ImageView
+        android:id="@+id/imageViewProduk"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+         />
+
+    <!-- Nama Produk -->
+    <TextView
+        android:id="@+id/textViewNamaProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama Produk"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+    <!-- Merk Produk -->
+    <TextView
+        android:id="@+id/textViewMerkProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Merk Produk" />
+
+    <!-- Kode Produk -->
+    <TextView
+        android:id="@+id/textViewKodeProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kode Produk" />
+
+    <!-- Harga Produk -->
+    <TextView
+        android:id="@+id/textViewHargaProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Harga Produk" />
+
+    <!-- Satuan Produk -->
+    <TextView
+        android:id="@+id/textViewSatuanProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Satuan Produk" />
+
+    <!-- Stok Produk -->
+    <TextView
+        android:id="@+id/textViewStokProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stok Produk" />
+
+    <!-- Kategori Produk -->
+    <TextView
+        android:id="@+id/textViewKategoriProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kategori Produk" />
+
+    <!-- Ukuran Produk -->
+    <TextView
+        android:id="@+id/textViewUkuranProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ukuran Produk" />
+
+    <!-- Deskripsi Produk -->
+    <TextView
+        android:id="@+id/textViewDeskripsiProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deskripsi Produk" />
+
+</LinearLayout>

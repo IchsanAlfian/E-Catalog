@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ichsanalfian.elog_pdam.databinding.ItemProdukBinding
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.seller.detail.DetailProdukActivity
 
 class SellerAdapter:
     ListAdapter<Barang, SellerAdapter.ViewHolder>(DIFF_CALLBACK) {
@@ -28,18 +29,21 @@ class SellerAdapter:
                 tvNamaProduk.text = barang.nama
                 tvStokProduk.text = barang.stok.toString()
             }
-//            itemView.setOnClickListener {
-//                val intent = Intent(itemView.context, DetailDataActivity::class.java)
-//                intent.putExtra(DetailDataActivity.EXTRA_NAMA, barang.nama)
-//                intent.putExtra(DetailDataActivity.EXTRA_DESC, barang.desc)
-//                intent.putExtra(DetailDataActivity.EXTRA_HARGA, barang.harga.toString())
-//                intent.putExtra(DetailDataActivity.EXTRA_MERK, barang.merk)
-//                intent.putExtra(DetailDataActivity.EXTRA_KATEGORI, barang.kategori)
-//                intent.putExtra(DetailDataActivity.EXTRA_IS_PPN, barang.isPPN.toString())
-//                intent.putExtra(DetailDataActivity.EXTRA_SATUAN, barang.satuan)
-//                intent.putExtra(DetailDataActivity.EXTRA_STOK, barang.stok.toString())
-//                itemView.context.startActivity(intent)
-//            }
+            itemView.setOnClickListener {
+                // Di SellerAdapter, saat item di-klik, tambahkan data produk ke dalam intent
+                val intent = Intent(itemView.context, DetailProdukActivity::class.java)
+                intent.putExtra(DetailProdukActivity.EXTRA_NAMA, barang.nama)
+                intent.putExtra(DetailProdukActivity.EXTRA_MERK, barang.merk)
+                intent.putExtra(DetailProdukActivity.EXTRA_KODE, barang.kode)
+                intent.putExtra(DetailProdukActivity.EXTRA_HARGA, barang.harga.toString())
+                intent.putExtra(DetailProdukActivity.EXTRA_SATUAN, barang.satuan)
+                intent.putExtra(DetailProdukActivity.EXTRA_STOK, barang.stok.toString())
+                intent.putExtra(DetailProdukActivity.EXTRA_KATEGORI, barang.kategori)
+                intent.putExtra(DetailProdukActivity.EXTRA_UKURAN, barang.ukuran)
+                intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.desc)
+                itemView.context.startActivity(intent)
+
+            }
         }
     }
 
