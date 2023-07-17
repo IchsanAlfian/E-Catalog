@@ -30,6 +30,6 @@ data class Barang(
     @SerializedName("ukuran")
     val ukuran: String,
 
-    @SerializedName("desc")
-    val desc: String
+    @SerializedName("deskripsi")
+    val deskripsi: String
 )

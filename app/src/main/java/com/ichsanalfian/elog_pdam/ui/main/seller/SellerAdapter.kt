@@ -40,7 +40,7 @@ class SellerAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_STOK, barang.stok.toString())
                 intent.putExtra(DetailProdukActivity.EXTRA_KATEGORI, barang.kategori)
                 intent.putExtra(DetailProdukActivity.EXTRA_UKURAN, barang.ukuran)
-                intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.desc)
+                intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
                 itemView.context.startActivity(intent)
 
             }
