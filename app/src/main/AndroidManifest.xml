@@ -23,7 +23,7 @@
             android:name=".ui.main.seller.detail.DetailProdukActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.seller.TambahBarangActivity"
+            android:name=".ui.main.seller.add.TambahBarangActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.seller.SellerActivity"

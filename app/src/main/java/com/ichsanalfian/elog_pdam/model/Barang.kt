@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Barang(
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
 
     @SerializedName("nama")
     val nama: String,
@@ -31,5 +31,8 @@ data class Barang(
     val ukuran: String,
 
     @SerializedName("deskripsi")
-    val deskripsi: String
+    val deskripsi: String,
+
+    @SerializedName("gambar")
+    val gambar: String?
 )

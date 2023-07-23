@@ -6,6 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.ichsanalfian.elog_pdam.BuildConfig
 import com.ichsanalfian.elog_pdam.databinding.ItemProdukBinding
 import com.ichsanalfian.elog_pdam.model.Barang
 import com.ichsanalfian.elog_pdam.ui.main.seller.detail.DetailProdukActivity
@@ -28,7 +33,15 @@ class SellerAdapter:
             binding.apply {
                 tvNamaProduk.text = barang.nama
                 tvStokProduk.text = barang.stok.toString()
+                //TODO Tambahan
+                Glide.with(itemView.context).load("${BuildConfig.BASE_URL}${barang.gambar}")
+                    .apply(RequestOptions().override(263,263))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .into(ivProduk)
             }
+
             itemView.setOnClickListener {
                 // Di SellerAdapter, saat item di-klik, tambahkan data produk ke dalam intent
                 val intent = Intent(itemView.context, DetailProdukActivity::class.java)
@@ -41,8 +54,9 @@ class SellerAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_KATEGORI, barang.kategori)
                 intent.putExtra(DetailProdukActivity.EXTRA_UKURAN, barang.ukuran)
                 intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
-                itemView.context.startActivity(intent)
+                intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar) //TODO Tambahan
 
+                itemView.context.startActivity(intent)
             }
         }
     }

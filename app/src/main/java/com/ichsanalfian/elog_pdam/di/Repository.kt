@@ -4,14 +4,23 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.ichsanalfian.elog_pdam.api.ApiConfig
 import com.ichsanalfian.elog_pdam.api.ApiService
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.model.UploadResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class Repository(private val api : ApiService) {
     val barang = MutableLiveData<List<Barang>>()
@@ -32,7 +41,7 @@ class Repository(private val api : ApiService) {
                         barang.postValue(barangList)
                     }
                 } else {
-                    Log.e("UserViewModel", "Error: ${response.message()}")
+                    Log.e("Repository setBarang", "Error: ${response.message()}")
                 }
             }
 
@@ -48,4 +57,48 @@ class Repository(private val api : ApiService) {
     fun getLiveBarang(): LiveData<List<Barang>> {
         return barang
     }
+
+    //TODO Diganti
+    fun postBarang(barang: Barang, imageFile: File) {
+        val data = JsonObject().apply {
+            addProperty("nama", barang.nama)
+            addProperty("merk", barang.merk)
+            addProperty("harga", barang.harga)
+            addProperty("satuan", barang.satuan)
+            addProperty("kode", barang.kode)
+            addProperty("stok", barang.stok)
+            addProperty("kategori", barang.kategori)
+            addProperty("ukuran", barang.ukuran)
+            addProperty("deskripsi", barang.deskripsi)
+            addProperty("gambar", barang.gambar)
+        }
+
+        println("Ini nama yang diparsing ${barang.gambar}")
+        val req = Gson().toJson(data).toRequestBody("application/json".toMediaType())
+        // Convert the image file to a RequestBody
+        val imageRequestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+
+        // Send the data and image in the multipart request
+        val client = ApiConfig.getApiService().postBarang(req, imagePart)
+        client.enqueue(object : Callback<UploadResponse> {
+            override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("Repo postBarang sukses", "Msg: ${response.body().toString()}")
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), UploadResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo postBarang gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+        })
+    }
+
 }

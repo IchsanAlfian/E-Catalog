@@ -8,6 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
+        buildConfigField("String", "BASE_URL", '"http://10.0.2.2/local/"') //TODO Tambahan, cek java(generated) BuildConfig kalau semisal variabel BASE_URL belum muncul tambahin manual
         applicationId "com.ichsanalfian.elog_pdam"
         minSdk 21
         targetSdk 33
@@ -61,6 +62,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    implementation 'com.github.bumptech.glide:glide:4.13.1' //TODO Tambahan
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

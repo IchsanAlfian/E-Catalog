@@ -3,14 +3,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ichsanalfian.elog_pdam.databinding.FragmentProdukBinding
-import com.ichsanalfian.elog_pdam.model.Barang
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerAdapter
-import com.ichsanalfian.elog_pdam.ui.main.seller.SellerFactory
-import com.ichsanalfian.elog_pdam.ui.main.seller.SellerViewModel
+import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerFactory
+import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerViewModel
 
 class ProdukFragment : Fragment() {
     private lateinit var binding: FragmentProdukBinding

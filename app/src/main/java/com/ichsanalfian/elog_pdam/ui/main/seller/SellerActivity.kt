@@ -5,10 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.ichsanalfian.elog_pdam.databinding.ActivityMainBinding
 import com.ichsanalfian.elog_pdam.databinding.ActivitySellerBinding
+import com.ichsanalfian.elog_pdam.ui.main.seller.add.TambahBarangActivity
 
 class SellerActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySellerBinding
@@ -29,7 +28,7 @@ class SellerActivity : AppCompatActivity() {
         val fab: FloatingActionButton = binding.fab
 
         fab.setOnClickListener {
-            startActivity(Intent(this,TambahBarangActivity::class.java))
+            startActivity(Intent(this, TambahBarangActivity::class.java))
         }
     }
 }

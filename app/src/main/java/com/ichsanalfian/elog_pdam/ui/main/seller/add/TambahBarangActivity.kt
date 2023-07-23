@@ -1,9 +1,6 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller
+package com.ichsanalfian.elog_pdam.ui.main.seller.add
 
 import android.Manifest
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,20 +11,25 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
-import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.ichsanalfian.elog_pdam.databinding.ActivityTambahBarangBinding
-import java.io.FileNotFoundException
-import java.io.InputStream
+import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
+import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerFactory
+import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerViewModel
+import java.io.*
 
 class TambahBarangActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTambahBarangBinding
     private var selectedImage: Bitmap? = null
+    private lateinit var sellerViewModel: SellerViewModel
+
+    private lateinit var selectedImageFile: File
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,7 @@ class TambahBarangActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
+        sellerViewModel = ViewModelProvider(this, SellerFactory())[SellerViewModel::class.java]
         // Cek izin kamera
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Jika izin belum diberikan, minta izin kamera secara dinamis
@@ -54,17 +57,22 @@ class TambahBarangActivity : AppCompatActivity() {
             // Ambil data dari input dan foto yang telah diunggah
             val nama = binding.editTextNama.text.toString()
             val merk = binding.editTextMerk.text.toString()
-            val harga = binding.editTextHarga.text.toString()
+            val kode = binding.editTextKode.text.toString()
+            val harga = binding.editTextHarga.text.toString().toInt() //TODO Diganti
             val satuan = binding.editTextSatuan.text.toString()
-            val stok = binding.editTextStok.text.toString()
+            val stok = binding.editTextStok.text.toString().toInt() //TODO Diganti
             val kategori = binding.editTextKategori.text.toString()
             val ukuran = binding.editTextUkuran.text.toString()
             val deskripsi = binding.editTextDeskripsi.text.toString()
+
 
             // Lakukan penyimpanan data ke database atau tindakan lain yang sesuai
             // ...
             // Jika perlu, Anda juga dapat mengunggah foto ke server di sini
             // ...
+            //TODO 4: Panggil fungsi pada sellerViewModel untuk mengupload (POST) data ke API
+            val barang = Barang(null, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile.name) //TODO Diganti
+            sellerViewModel.postBarang(barang, selectedImageFile)
             showSuccessDialog()
 
         }
@@ -79,6 +87,21 @@ class TambahBarangActivity : AppCompatActivity() {
                 Toast.makeText(this, "Izin kamera dibutuhkan untuk mengakses kamera", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    private fun saveImageToFile(bitmap: Bitmap?): File {
+        // Create a file in the cache directory to store the image
+        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg" //TODO Diganti
+        val file = File(cacheDir, imgName)
+        try {
+            val stream = FileOutputStream(file)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+            stream.flush()
+            stream.close()
+            return file
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        throw FileNotFoundException("Failed to save image to file.")
     }
 
 
@@ -105,6 +128,7 @@ class TambahBarangActivity : AppCompatActivity() {
         startActivityForResult(pickPhotoIntent, REQUEST_IMAGE_PICK)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -114,6 +138,9 @@ class TambahBarangActivity : AppCompatActivity() {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     selectedImage = imageBitmap
                     binding.imageViewFoto.setImageBitmap(selectedImage)
+
+                    // Save the selected image to a file
+                    selectedImageFile = saveImageToFile(selectedImage)
                 }
                 REQUEST_IMAGE_PICK -> {
                     val imageUri: Uri? = data?.data
@@ -122,6 +149,9 @@ class TambahBarangActivity : AppCompatActivity() {
                             val imageStream: InputStream? = contentResolver.openInputStream(imageUri)
                             selectedImage = BitmapFactory.decodeStream(imageStream)
                             binding.imageViewFoto.setImageBitmap(selectedImage)
+
+                            // Save the selected image to a file
+                            selectedImageFile = saveImageToFile(selectedImage)
                         } catch (e: FileNotFoundException) {
                             e.printStackTrace()
                             Toast.makeText(this, "Gambar tidak ditemukan!", Toast.LENGTH_SHORT).show()
@@ -131,6 +161,7 @@ class TambahBarangActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun showSuccessDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle("YEAY")
@@ -140,6 +171,7 @@ class TambahBarangActivity : AppCompatActivity() {
             dialog.dismiss()
             // Selesaikan Activity dan kembali ke halaman sebelumnya
             finish()
+            startActivity(Intent(this, SellerActivity::class.java))
         })
 
         val alertDialog: AlertDialog = dialogBuilder.create()

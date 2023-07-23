@@ -1,6 +1,6 @@
 package com.ichsanalfian.elog_pdam.api
 
-import androidx.viewbinding.BuildConfig
+import com.ichsanalfian.elog_pdam.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,7 +18,7 @@ class ApiConfig {
                 .addInterceptor(loggingInterceptor)
                 .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://10.0.2.2/local/")
+                .baseUrl("${BuildConfig.BASE_URL}") //TODO Diganti, cek gradle module:app
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()

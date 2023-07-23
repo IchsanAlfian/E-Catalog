@@ -1,4 +1,4 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller
+package com.ichsanalfian.elog_pdam.ui.main.seller.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
