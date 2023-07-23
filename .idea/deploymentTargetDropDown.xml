@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\omen\.android\avd\Anti_fence_2.avd" />
+            <value value="C:\Users\omen\.android\avd\AAAA.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-07-17T05:03:35.838289300Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-07-23T13:24:34.661728100Z" />
   </component>
 </project>

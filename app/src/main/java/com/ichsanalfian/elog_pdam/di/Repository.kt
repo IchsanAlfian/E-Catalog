@@ -100,5 +100,15 @@ class Repository(private val api : ApiService) {
             }
         })
     }
+    fun searchBarang(query: String): LiveData<List<Barang>> {
+        val filteredList = MutableLiveData<List<Barang>>()
+        barang.value?.let { list ->
+            val filtered = list.filter { barang ->
+                barang.nama.contains(query, ignoreCase = true)
+            }
+            filteredList.postValue(filtered)
+        }
+        return filteredList
+    }
 
 }
