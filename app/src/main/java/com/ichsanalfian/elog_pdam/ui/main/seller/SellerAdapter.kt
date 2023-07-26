@@ -54,7 +54,8 @@ class SellerAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_KATEGORI, barang.kategori)
                 intent.putExtra(DetailProdukActivity.EXTRA_UKURAN, barang.ukuran)
                 intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
-                intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar) //TODO Tambahan
+                intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar)
+                intent.putExtra(DetailProdukActivity.EXTRA_ID, barang.id)
 
                 itemView.context.startActivity(intent)
             }

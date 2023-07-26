@@ -110,5 +110,28 @@ class Repository(private val api : ApiService) {
         }
         return filteredList
     }
+    fun deleteBarang(id: Int) {
+        val client = ApiConfig.getApiService().deleteBarang(id)
+        client.enqueue(object : Callback<UploadResponse> {
+            override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("Repo deleteBarang", "Msg: ${response.body().toString()}")
+                    // Handle successful deletion, for example, show a success dialog or perform other actions
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.string(), UploadResponse::class.java)
+                    response.errorBody()?.close()
+                    Log.e("Repo deleteBarang", "Error: $error")
+                    // Handle error in deletion, for example, show an error dialog or perform other actions
+                }
+            }
+
+            override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+                // Handle failure in deletion, for example, show a failure dialog or perform other actions
+            }
+        })
+    }
 
 }

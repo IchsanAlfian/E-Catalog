@@ -9,26 +9,28 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="16dp"
         android:theme="@style/Theme.Elog_PDAM.AppBarOverlay">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minHeight="?actionBarSize"
-            android:padding="@dimen/appbar_padding"
-            android:text="@string/seller_page"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+<!--        <TextView-->
+<!--            android:id="@+id/title"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:minHeight="?actionBarSize"-->
+<!--            android:padding="@dimen/appbar_padding"-->
+<!--            android:text="@string/seller_page"-->
+<!--            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />-->
 
         <!-- SearchView for product search -->
         <androidx.appcompat.widget.SearchView
+
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:queryHint="Cari Produk..."
             android:iconifiedByDefault="false"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
+
             app:defaultQueryHint="Cari Produk..."
             app:iconifiedByDefault="false"
             app:showAsAction="collapseActionView|ifRoom" />

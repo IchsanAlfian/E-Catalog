@@ -28,4 +28,10 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
             repository.postBarang(barang, imageFile)
         }
     }
+    fun deleteBarang(id: Int) {
+        viewModelScope.launch {
+            repository.deleteBarang(id)
+        }
+    }
+
 }

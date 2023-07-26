@@ -18,10 +18,10 @@ interface ApiService {
         @Part("data") data: RequestBody, // Data barang dalam bentuk RequestBody
         @Part image: MultipartBody.Part? // Gambar yang diunggah
     ): Call<UploadResponse>
-
-    //TODO ABAIKAN AJA
-    @POST("post_barang2.php")
-    fun postBarang2(
-        @Body data: RequestBody, // Data barang dalam bentuk JsonObject
+    @GET("delete_barang.php")
+    fun deleteBarang(
+        @Query("id") id: Int
     ): Call<UploadResponse>
+
+
 }
