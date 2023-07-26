@@ -134,4 +134,54 @@ class Repository(private val api : ApiService) {
         })
     }
 
+    fun updateBarang(barang: Barang, imageFile: File?) {
+        val data = JsonObject().apply {
+            addProperty("id", barang.id) // ID produk yang akan diupdate
+            addProperty("nama", barang.nama)
+            addProperty("merk", barang.merk)
+            addProperty("harga", barang.harga)
+            addProperty("satuan", barang.satuan)
+            addProperty("kode", barang.kode)
+            addProperty("stok", barang.stok)
+            addProperty("kategori", barang.kategori)
+            addProperty("ukuran", barang.ukuran)
+            addProperty("deskripsi", barang.deskripsi)
+            addProperty("gambar", barang.gambar)
+        }
+
+        // Konversi data menjadi RequestBody
+        val req = Gson().toJson(data).toRequestBody("application/json".toMediaType())
+
+        // Jika ada perubahan gambar, tambahkan gambar dalam bentuk MultipartBody.Part
+        val imagePart = if (imageFile != null) {
+            val imageRequestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+        } else {
+            null
+        }
+
+        // Panggil endpoint updateBarang di ApiService
+        val client = ApiConfig.getApiService().updateBarang(barang.id!!, req, imagePart)
+        client.enqueue(object : Callback<UploadResponse> {
+            override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("Repo updateBarang", "Msg: ${response.body().toString()}")
+                    // Handle successful update, for example, show a success dialog or perform other actions
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.string(), UploadResponse::class.java)
+                    response.errorBody()?.close()
+                    Log.e("Repo updateBarang", "Error: $error")
+                    // Handle error in update, for example, show an error dialog or perform other actions
+                }
+            }
+
+            override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+                // Handle failure in update, for example, show a failure dialog or perform other actions
+            }
+        })
+    }
+
 }

@@ -33,5 +33,8 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
             repository.deleteBarang(id)
         }
     }
+    fun updateBarang(barang: Barang, imageFile: File?) {
+        repository.updateBarang(barang, imageFile)
+    }
 
 }

@@ -23,5 +23,13 @@ interface ApiService {
         @Query("id") id: Int
     ): Call<UploadResponse>
 
+    @Multipart
+    @POST("update_barang.php")
+    fun updateBarang(
+        @Part("id") id: Int,
+        @Part("data") data: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Call<UploadResponse>
+
 
 }
