@@ -15,9 +15,10 @@ import com.ichsanalfian.elog_pdam.BuildConfig
 import com.ichsanalfian.elog_pdam.R
 import com.ichsanalfian.elog_pdam.databinding.ActivityDetailProdukBinding
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
+import com.ichsanalfian.elog_pdam.ui.main.seller.update.UpdateBarangActivity
 
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerFactory
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerViewModel
+import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
+import com.ichsanalfian.elog_pdam.viewModel.SellerViewModel
 
 class DetailProdukActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailProdukBinding
@@ -53,7 +54,7 @@ class DetailProdukActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailProdukBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        sellerViewModel = ViewModelProvider(this, SellerFactory())[SellerViewModel::class.java]
+        sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
 
         // Ambil data dari intent
         namaProduk = intent.getStringExtra(EXTRA_NAMA)

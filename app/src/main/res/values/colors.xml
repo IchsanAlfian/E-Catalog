@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     //tambahan
-    <color name="abu">#40434E</color>
+    <color name="abu">#494F58</color>
     <color name="biru">#59BFE8</color>
+    <color name="oren">#FFAE45</color>
 </resources>

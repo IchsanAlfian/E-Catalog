@@ -3,7 +3,7 @@ package com.ichsanalfian.elog_pdam.model
 import com.google.gson.annotations.SerializedName
 
 //TODO kelas tambahan
-data class UploadResponse(
+data class MessageResponse(
     @field:SerializedName("error")
     val error: Boolean,
 

@@ -36,6 +36,8 @@ android {
     }
 }
 dependencies {
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
     ext {
         core_version = "1.8.0"
         appcompat_version = "1.4.2"

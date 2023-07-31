@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.ichsanalfian.elog_pdam.R
 import com.ichsanalfian.elog_pdam.databinding.FragmentProdukBinding
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerAdapter
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerFactory
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerViewModel
+import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
+import com.ichsanalfian.elog_pdam.viewModel.SellerViewModel
 
 
 class ProdukFragment : Fragment() {
@@ -37,7 +37,7 @@ class ProdukFragment : Fragment() {
             adapter = sellerAdapter
         }
 
-        sellerViewModel = ViewModelProvider(this, SellerFactory())[SellerViewModel::class.java]
+        sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
         sellerViewModel.setBarang()
         sellerViewModel.getBarang().observe(viewLifecycleOwner) { listBarang ->
             if (listBarang != null) {

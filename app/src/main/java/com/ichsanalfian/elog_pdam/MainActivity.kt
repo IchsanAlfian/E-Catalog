@@ -9,6 +9,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import com.ichsanalfian.elog_pdam.ui.main.seller.SectionsPagerAdapter
 import com.ichsanalfian.elog_pdam.databinding.ActivityMainBinding
+import com.ichsanalfian.elog_pdam.ui.auth.LoginActivity
+import com.ichsanalfian.elog_pdam.ui.auth.RegisterActivity
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +25,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnSeller.setOnClickListener {
             startActivity(Intent(this,SellerActivity::class.java))
+        }
+
+        binding.btnRegisterCoba.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        binding.btnLoginCoba.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 }

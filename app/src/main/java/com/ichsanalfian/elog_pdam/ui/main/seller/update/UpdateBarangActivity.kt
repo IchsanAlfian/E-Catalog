@@ -1,7 +1,8 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller.detail
+package com.ichsanalfian.elog_pdam.ui.main.seller.update
 
 import android.Manifest
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,21 +15,31 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.ichsanalfian.elog_pdam.BuildConfig
 import com.ichsanalfian.elog_pdam.databinding.ActivityUpdateBarangBinding
-import com.ichsanalfian.elog_pdam.ui.main.seller.add.TambahBarangActivity
+import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
+import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
+import com.ichsanalfian.elog_pdam.viewModel.SellerViewModel
 import java.io.*
 
 class UpdateBarangActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUpdateBarangBinding
-    private lateinit var selectedImageFile: File
     private var selectedImage: Bitmap? = null
+    private lateinit var sellerViewModel: SellerViewModel
+    private lateinit var selectedImageFile: File
+    private var isImageChanged = false
+    private var isNewImageSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateBarangBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
+
+
 
         // Get data from intent extras
         val namaProduk = intent.getStringExtra(EXTRA_NAMA)
@@ -42,6 +53,7 @@ class UpdateBarangActivity : AppCompatActivity() {
         val deskripsiProduk = intent.getStringExtra(EXTRA_DESKRIPSI)
         val gambarProduk = intent.getStringExtra(EXTRA_GAMBAR) //TODO Tambahan
         val idProduk = intent.getIntExtra(EXTRA_ID, 0)
+        selectedImageFile = File(gambarProduk)
 
         // Fill the input fields and image view with the data from the intent
         binding.apply {
@@ -62,21 +74,75 @@ class UpdateBarangActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Jika izin belum diberikan, minta izin kamera secara dinamis
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),
-                UpdateBarangActivity.CAMERA_PERMISSION_REQUEST_CODE
+                CAMERA_PERMISSION_REQUEST_CODE
             )
         } else {
             // Jika izin sudah diberikan, Anda dapat membuka kamera
         }
+        // Load existing image (if any)
+        Glide.with(applicationContext).load("${BuildConfig.BASE_URL}${gambarProduk}")
+            .into(binding.imageViewFoto)
 
 
         binding.buttonUploadFoto.setOnClickListener {
             // Memanggil dialog untuk memilih sumber foto (kamera atau galeri)
             showImagePickerDialog()
         }
+
+        binding.buttonSimpan.setOnClickListener {
+            // Ambil data dari input dan foto yang telah diunggah
+            val id = intent.getIntExtra(EXTRA_ID, 0)
+            val nama = binding.editTextNama.text.toString()
+            val merk = binding.editTextMerk.text.toString()
+            val kode = binding.editTextKode.text.toString()
+            val harga = binding.editTextHarga.text.toString().toInt()
+            val satuan = binding.editTextSatuan.text.toString()
+            val stok = binding.editTextStok.text.toString().toInt()
+            val kategori = binding.editTextKategori.text.toString()
+            val ukuran = binding.editTextUkuran.text.toString()
+            val deskripsi = binding.editTextDeskripsi.text.toString()
+
+            // ...
+            // Panggil fungsi updateBarang pada sellerViewModel dengan menyertakan ID barang
+            val imageName = if (isNewImageSelected) selectedImageFile.name else gambarProduk // Sesuaikan dengan nama variabel yang menyimpan nama file gambar sebelumnya
+
+            val barang = Barang(id, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile.name) // Menggunakan nama file yang dipilih
+            sellerViewModel.updateBarang(id, barang, selectedImageFile)
+            showSuccessDialog()
+        }
     }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Jika izin kamera diberikan, buka kamera
+
+            } else {
+                Toast.makeText(this, "Izin kamera dibutuhkan untuk mengakses kamera", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    private fun saveImageToFile(bitmap: Bitmap?): File {
+        // Create a file in the cache directory to store the image
+        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg" //TODO Diganti
+        val file = File(cacheDir, imgName)
+        try {
+            val stream = FileOutputStream(file)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+            stream.flush()
+            stream.close()
+            return file
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        throw FileNotFoundException("Failed to save image to file.")
+    }
+
+
+
     private fun showImagePickerDialog() {
         val items = arrayOf<CharSequence>("Kamera", "Galeri")
-        val builder = AlertDialog.Builder(this)
+        val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle("Pilih Sumber Foto")
         builder.setItems(items) { _, item ->
             when (item) {
@@ -109,6 +175,8 @@ class UpdateBarangActivity : AppCompatActivity() {
 
                     // Save the selected image to a file
                     selectedImageFile = saveImageToFile(selectedImage)
+
+                    isNewImageSelected = true // Set isNewImageSelected ke true karena gambar diubah
                 }
                 REQUEST_IMAGE_PICK -> {
                     val imageUri: Uri? = data?.data
@@ -120,6 +188,8 @@ class UpdateBarangActivity : AppCompatActivity() {
 
                             // Save the selected image to a file
                             selectedImageFile = saveImageToFile(selectedImage)
+
+                            isNewImageSelected = true // Set isNewImageSelected ke true karena gambar diubah
                         } catch (e: FileNotFoundException) {
                             e.printStackTrace()
                             Toast.makeText(this, "Gambar tidak ditemukan!", Toast.LENGTH_SHORT).show()
@@ -129,20 +199,21 @@ class UpdateBarangActivity : AppCompatActivity() {
             }
         }
     }
-    private fun saveImageToFile(bitmap: Bitmap?): File {
-        // Create a file in the cache directory to store the image
-        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg" //TODO Diganti
-        val file = File(cacheDir, imgName)
-        try {
-            val stream = FileOutputStream(file)
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-            stream.flush()
-            stream.close()
-            return file
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        throw FileNotFoundException("Failed to save image to file.")
+
+    private fun showSuccessDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("YEAY")
+        dialogBuilder.setMessage("Barang berhasil ditambahkan!")
+        dialogBuilder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, _ ->
+            // Tindakan setelah tombol OK ditekan, misalnya mengosongkan form atau berpindah halaman
+            dialog.dismiss()
+            // Selesaikan Activity dan kembali ke halaman sebelumnya
+            finish()
+            startActivity(Intent(this, SellerActivity::class.java))
+        })
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 
     companion object {

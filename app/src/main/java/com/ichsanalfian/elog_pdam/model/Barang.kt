@@ -34,5 +34,8 @@ data class Barang(
     val deskripsi: String,
 
     @SerializedName("gambar")
-    val gambar: String?
+    val gambar: String? = null,
+
+    @SerializedName("idSeller")
+    val idSeller: String? = null
 )

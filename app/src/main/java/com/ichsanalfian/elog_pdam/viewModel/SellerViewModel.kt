@@ -1,7 +1,6 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller.viewModel
+package com.ichsanalfian.elog_pdam.viewModel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ichsanalfian.elog_pdam.di.Repository
@@ -10,11 +9,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class SellerViewModel (private val repository: Repository): ViewModel() {
-
-    fun searchBarang(query: String): LiveData<List<Barang>> {
-        return repository.searchBarang(query)
-    }
-    fun getBarang() : LiveData<List<Barang>> {
+    fun getBarang() : LiveData<List<Barang>?> {
         return repository.getLiveBarang()
     }
 
@@ -28,13 +23,17 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
             repository.postBarang(barang, imageFile)
         }
     }
+
     fun deleteBarang(id: Int) {
         viewModelScope.launch {
             repository.deleteBarang(id)
         }
     }
-    fun updateBarang(barang: Barang, imageFile: File?) {
-        repository.updateBarang(barang, imageFile)
+    fun updateBarang(id: Int, barang: Barang, imageFile: File?) {
+        repository.updateBarang(id ,barang, imageFile)
     }
 
+    fun searchBarang(query: String): LiveData<List<Barang>> {
+        return repository.searchBarang(query)
+    }
 }

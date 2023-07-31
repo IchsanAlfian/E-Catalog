@@ -1,6 +1,5 @@
 package com.ichsanalfian.elog_pdam.ui.main.seller.add
 
-
 import android.Manifest
 import android.app.Activity
 import android.content.DialogInterface
@@ -18,11 +17,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.ichsanalfian.elog_pdam.databinding.ActivityTambahBarangBinding
+import com.ichsanalfian.elog_pdam.local.UserPreferences
 import com.ichsanalfian.elog_pdam.model.Barang
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerFactory
-import com.ichsanalfian.elog_pdam.ui.main.seller.viewModel.SellerViewModel
-
+import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
+import com.ichsanalfian.elog_pdam.viewModel.SellerViewModel
 import java.io.*
 
 class TambahBarangActivity : AppCompatActivity() {
@@ -40,7 +39,7 @@ class TambahBarangActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        sellerViewModel = ViewModelProvider(this, SellerFactory())[SellerViewModel::class.java]
+        sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
         // Cek izin kamera
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Jika izin belum diberikan, minta izin kamera secara dinamis
@@ -60,20 +59,18 @@ class TambahBarangActivity : AppCompatActivity() {
             val nama = binding.editTextNama.text.toString()
             val merk = binding.editTextMerk.text.toString()
             val kode = binding.editTextKode.text.toString()
-            val harga = binding.editTextHarga.text.toString().toInt() //TODO Diganti
+            val harga = binding.editTextHarga.text.toString().toInt()
             val satuan = binding.editTextSatuan.text.toString()
-            val stok = binding.editTextStok.text.toString().toInt() //TODO Diganti
+            val stok = binding.editTextStok.text.toString().toInt()
             val kategori = binding.editTextKategori.text.toString()
             val ukuran = binding.editTextUkuran.text.toString()
             val deskripsi = binding.editTextDeskripsi.text.toString()
-
 
             // Lakukan penyimpanan data ke database atau tindakan lain yang sesuai
             // ...
             // Jika perlu, Anda juga dapat mengunggah foto ke server di sini
             // ...
-            //TODO 4: Panggil fungsi pada sellerViewModel untuk mengupload (POST) data ke API
-            val barang = Barang(null, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile.name) //TODO Diganti
+            val barang = Barang(null, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile.name, UserPreferences.user.id)
             sellerViewModel.postBarang(barang, selectedImageFile)
             showSuccessDialog()
 
@@ -92,7 +89,7 @@ class TambahBarangActivity : AppCompatActivity() {
     }
     private fun saveImageToFile(bitmap: Bitmap?): File {
         // Create a file in the cache directory to store the image
-        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg" //TODO Diganti
+        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg"
         val file = File(cacheDir, imgName)
         try {
             val stream = FileOutputStream(file)

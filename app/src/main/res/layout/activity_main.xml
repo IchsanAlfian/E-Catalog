@@ -8,11 +8,37 @@
 
     <Button
         android:id="@+id/btn_seller"
-        android:text="@string/seller_page"
         android:layout_width="150dp"
         android:layout_height="70dp"
+        android:text="@string/seller_page"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.281" />
+
+    <Button
+        android:id="@+id/btn_login_coba"
+        android:layout_width="144dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="196dp"
+        android:text="@string/login_page"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_register_coba"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:text="@string/register_page"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.487" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
