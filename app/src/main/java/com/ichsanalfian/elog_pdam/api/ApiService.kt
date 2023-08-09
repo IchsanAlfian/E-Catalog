@@ -62,4 +62,9 @@ interface ApiService {
         @Field("id_barang") idBarang: Int,
         @Field("jumlah") jumlah: Int
     ): Call<MessageResponse>
+
+    @GET("get_keranjang.php")
+    fun getKeranjang(@Query("id") id : String? = UserPreferences.user.id,
+    ): Call<GetBarangResponse>
+
 }

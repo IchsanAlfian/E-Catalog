@@ -310,5 +310,44 @@ class Repository(private val api : ApiService) {
         })
     }
 
+    private val _liveKeranjang = MutableLiveData<List<Barang>?>()
+    val liveKeranjang: LiveData<List<Barang>?> = _liveKeranjang
+
+
+    fun setBarangKeranjang() {
+        val client = ApiConfig.getApiService().getKeranjang()
+        client.enqueue(object : Callback<GetBarangResponse> {
+            override fun onResponse(
+                call: Call<GetBarangResponse>,
+                response: Response<GetBarangResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val getBarangResponse = response.body()
+                    if (getBarangResponse != null && !getBarangResponse.error) {
+                        val barangList = getBarangResponse.listBarang
+                        if (barangList != null) {
+                            barang.value = barangList
+                            println(barang.value.toString())
+                        } else{
+                            println("NULL NGAB")
+                        }
+                    } else {
+                        Log.e("Repository setBarang", "Error: ${response.message()}")
+                    }
+                } else {
+                    Log.e("Repository setBarang", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetBarangResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+
+
 
 }

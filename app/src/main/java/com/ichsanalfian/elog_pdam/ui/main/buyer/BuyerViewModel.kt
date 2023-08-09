@@ -39,4 +39,12 @@ class BuyerViewModel (private val repository: Repository): ViewModel() { //TODO 
     fun searchBarang(query: String): LiveData<List<Barang>> {
         return repository.searchBarang(query)
     }
+
+
+    private val _keranjang = MutableLiveData<List<Barang>?>()
+    val keranjang: LiveData<List<Barang>?> get() = _keranjang
+
+    fun getKeranjang() {
+        repository.setBarangKeranjang()
+    }
 }
