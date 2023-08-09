@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -88,6 +89,26 @@ class DetailProdukActivity : AppCompatActivity() {
                 .into(imageViewProduk)
         }
 
+        binding.buttonTambahKeranjang.setOnClickListener {
+            val jumlahStok = binding.editTextJumlahstok.text.toString().toIntOrNull()
+            if (jumlahStok != null && jumlahStok > 0) {
+                sellerViewModel.addToCart(idProduk, jumlahStok)
+                Toast.makeText(this, idProduk.toString(), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Masukkan jumlah stok yang valid.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Observe the addToCartResult LiveData
+        sellerViewModel.addToCartResult.observe(this) { result ->
+            val (success, message) = result
+            if (success) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_detail, menu)
@@ -134,6 +155,7 @@ class DetailProdukActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 
 
 

@@ -13,8 +13,8 @@ import retrofit2.http.*
 interface ApiService {
     @GET("get_barang_auth.php") //TODO Diganti, dipakai di buyer view
     fun getBarangAuth(
-        @Header("Authorization") id : String? = UserPreferences.user.id,
-    ): Call<JsonObject>
+        @Query("id") id : String? = UserPreferences.user.id,
+    ): Call<GetBarangResponse>
 
     @GET("get_barang_by_id.php") //TODO Tambahan, dipakai di seller view
     fun getBarangbySellerID(
@@ -54,5 +54,12 @@ interface ApiService {
         @Part("id") id: Int,
         @Part("data") data: RequestBody,
         @Part image: MultipartBody.Part?
+    ): Call<MessageResponse>
+
+    @FormUrlEncoded
+    @POST("add_cart.php")
+    fun addToCart(
+        @Field("id_barang") idBarang: Int,
+        @Field("jumlah") jumlah: Int
     ): Call<MessageResponse>
 }

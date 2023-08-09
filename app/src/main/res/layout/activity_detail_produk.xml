@@ -217,4 +217,21 @@
         android:layout_height="wrap_content"
         android:text="Deskripsi Produk" />
 
+    <EditText
+        android:id="@+id/editTextJumlahstok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Tombol Tambah ke Keranjang -->
+    <Button
+        android:id="@+id/buttonTambahKeranjang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tambah ke Keranjang"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+
+        android:textColor="#FFFFFF" />
+
 </LinearLayout>

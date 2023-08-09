@@ -1,6 +1,7 @@
 package com.ichsanalfian.elog_pdam.viewModel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ichsanalfian.elog_pdam.di.Repository
@@ -11,6 +12,11 @@ import java.io.File
 class SellerViewModel (private val repository: Repository): ViewModel() {
     fun getBarang() : LiveData<List<Barang>?> {
         return repository.getLiveBarang()
+    }
+    fun setBarangBuyer(){
+        viewModelScope.launch {
+            repository.setBarangBuyer()
+        }
     }
 
     fun setBarang(){
@@ -35,5 +41,21 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
 
     fun searchBarang(query: String): LiveData<List<Barang>> {
         return repository.searchBarang(query)
+    }
+
+    //digantii besuk ja
+    private val _addToCartResult = MutableLiveData<Pair<Boolean, String>>()
+    val addToCartResult: LiveData<Pair<Boolean, String>> get() = _addToCartResult
+
+    fun addToCart(idBarang: Int, jumlah: Int) {
+        viewModelScope.launch {
+            repository.addToCart(idBarang, jumlah) { success, message ->
+                if (success) {
+                    _addToCartResult.value = Pair(success, "Produk berhasil ditambahkan ke keranjang!")
+                } else {
+                    _addToCartResult.value = Pair(success, message ?: "Failed to add item to cart.")
+                }
+            }
+        }
     }
 }

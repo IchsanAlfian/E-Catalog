@@ -94,6 +94,39 @@ class Repository(private val api : ApiService) {
         return barang
     }
 
+    fun setBarangBuyer() {
+        val client = ApiConfig.getApiService().getBarangAuth()
+        client.enqueue(object : Callback<GetBarangResponse> {
+            override fun onResponse(
+                call: Call<GetBarangResponse>,
+                response: Response<GetBarangResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val getBarangResponse = response.body()
+                    if (getBarangResponse != null && !getBarangResponse.error) {
+                        val barangList = getBarangResponse.listBarang
+                        if (barangList != null) {
+                            barang.value = barangList
+                            println(barang.value.toString())
+                        } else{
+                            println("NULL NGAB")
+                        }
+                    } else {
+                        Log.e("Repository setBarang", "Error: ${response.message()}")
+                    }
+                } else {
+                    Log.e("Repository setBarang", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetBarangResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
     fun setBarang() {
         val client = ApiConfig.getApiService().getBarangbySellerID()
         client.enqueue(object : Callback<GetBarangResponse> {
@@ -254,5 +287,28 @@ class Repository(private val api : ApiService) {
             }
         })
     }
+
+    fun addToCart(idBarang: Int, jumlah: Int, onResponse: (Boolean, String) -> Unit) {
+        val client = ApiConfig.getApiService().addToCart(idBarang, jumlah)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                if (response.isSuccessful) {
+                    val messageResponse = response.body()
+                    if (messageResponse != null && !messageResponse.error) {
+                        onResponse(true, "Item added to cart successfully.")
+                    } else {
+                        onResponse(false, "Failed to add item to cart.")
+                    }
+                } else {
+                    onResponse(false, "Failed to add item to cart.")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                onResponse(false, "Failed to add item to cart.")
+            }
+        })
+    }
+
 
 }
