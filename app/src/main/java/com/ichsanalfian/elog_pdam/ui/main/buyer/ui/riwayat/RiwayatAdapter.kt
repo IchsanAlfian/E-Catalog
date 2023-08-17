@@ -1,4 +1,4 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller
+package com.ichsanalfian.elog_pdam.ui.main.buyer.ui.riwayat
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -11,12 +11,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.ichsanalfian.elog_pdam.BuildConfig
-import com.ichsanalfian.elog_pdam.databinding.ItemProdukBinding
+import com.ichsanalfian.elog_pdam.databinding.ItemKeranjangBinding
+import com.ichsanalfian.elog_pdam.databinding.ItemRiwayatBinding
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.buyer.ui.keranjang.KeranjangAdapter
 import com.ichsanalfian.elog_pdam.ui.main.seller.detail.DetailProdukActivity
 
-class SellerAdapter:
-    ListAdapter<Barang, SellerAdapter.ViewHolder>(DIFF_CALLBACK) {
+class RiwayatAdapter:
+    ListAdapter<Barang,RiwayatAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     interface OnItemClickCallback {
         fun onItemClicked(data: Barang)
@@ -24,22 +26,23 @@ class SellerAdapter:
 
     private var onItemClickCallback: OnItemClickCallback? = null
 
-    inner class ViewHolder(private val binding: ItemProdukBinding) :
+    inner class ViewHolder(private val binding: ItemRiwayatBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(barang: Barang) {
             binding.root.setOnClickListener {
                 onItemClickCallback?.onItemClicked(barang)
             }
             binding.apply {
-                tvNamaProduk.text = barang.nama
-                tvStokProduk.text = barang.stok.toString()
+                tvTanggalProduk.text = barang.tanggal_checkout.toString()
+                tvNameProduk.text = barang.nama
+                tvJumlah.text = barang.jumlah.toString()
                 //TODO Tambahan
                 Glide.with(itemView.context).load("${BuildConfig.BASE_URL}${barang.gambar}")
-                    .apply(RequestOptions().override(263,263))
+                    .apply(RequestOptions().override(263, 263))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
-                    .into(ivProduk)
+                    .into(ivProdukRiwayat)
             }
 
             itemView.setOnClickListener {
@@ -56,8 +59,8 @@ class SellerAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
                 intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar)
                 intent.putExtra(DetailProdukActivity.EXTRA_ID, barang.id)
-
-
+                intent.putExtra(DetailProdukActivity.EXTRA_PAGE, 2)
+                intent.putExtra(DetailProdukActivity.EXTRA_JUMLAH_KERANJANG, barang.jumlah)
                 itemView.context.startActivity(intent)
             }
         }
@@ -65,7 +68,7 @@ class SellerAdapter:
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            ItemProdukBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemRiwayatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

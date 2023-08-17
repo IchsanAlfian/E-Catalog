@@ -1,4 +1,4 @@
-package com.ichsanalfian.elog_pdam.ui.main.seller
+package com.ichsanalfian.elog_pdam.ui.main.buyer.ui.home
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -13,10 +13,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.ichsanalfian.elog_pdam.BuildConfig
 import com.ichsanalfian.elog_pdam.databinding.ItemProdukBinding
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.seller.SellerAdapter
 import com.ichsanalfian.elog_pdam.ui.main.seller.detail.DetailProdukActivity
 
-class SellerAdapter:
-    ListAdapter<Barang, SellerAdapter.ViewHolder>(DIFF_CALLBACK) {
+class BerandaAdapter :
+    ListAdapter<Barang, BerandaAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     interface OnItemClickCallback {
         fun onItemClicked(data: Barang)
@@ -56,6 +57,7 @@ class SellerAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
                 intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar)
                 intent.putExtra(DetailProdukActivity.EXTRA_ID, barang.id)
+                intent.putExtra(DetailProdukActivity.EXTRA_PAGE, 1)
 
 
                 itemView.context.startActivity(intent)

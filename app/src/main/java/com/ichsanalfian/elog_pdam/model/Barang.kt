@@ -1,6 +1,7 @@
 package com.ichsanalfian.elog_pdam.model
 
 import com.google.gson.annotations.SerializedName
+import com.ichsanalfian.elog_pdam.local.UserPreferences
 
 data class Barang(
     @SerializedName("id")
@@ -41,4 +42,12 @@ data class Barang(
 
     @SerializedName("jumlah")
     val jumlah: Int? = null,
+
+    //riwayat
+    @SerializedName("tanggal_checkout")
+    val tanggal_checkout: String? = null,
+
+    @SerializedName("idUser")
+    val idUser: String? = null,
+
 )

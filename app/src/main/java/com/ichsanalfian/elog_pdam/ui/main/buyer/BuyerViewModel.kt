@@ -13,13 +13,7 @@ class BuyerViewModel (private val repository: Repository): ViewModel() { //TODO 
     private val _addToCartResult = MutableLiveData<Pair<Boolean, String>>()
     val addToCartResult: LiveData<Pair<Boolean, String>> get() = _addToCartResult
 
-    fun addToCart(idBarang: Int, jumlah: Int) {
-        viewModelScope.launch {
-            repository.addToCart(idBarang, jumlah) { success, message ->
-                _addToCartResult.value = Pair(success, message)
-            }
-        }
-    }
+
 
     fun getBarang() : LiveData<List<Barang>?> {
         return repository.getLiveBarang()
@@ -46,5 +40,24 @@ class BuyerViewModel (private val repository: Repository): ViewModel() { //TODO 
 
     fun getKeranjang() {
         repository.setBarangKeranjang()
+    }
+
+    fun getRiwayat() {
+        repository.setBarangRiwayat()
+    }
+    private val _moveToHistoryResult = MutableLiveData<Pair<Boolean, String>>()
+    val moveToHistoryResult: LiveData<Pair<Boolean, String>> = _moveToHistoryResult
+
+    fun moveToHistory(id_user: String) {
+
+        viewModelScope.launch {
+            repository.moveToHistory(id_user) { success, message ->
+                if (success) {
+                _moveToHistoryResult.value = Pair(success, "Produk telah berhasil Checkout")
+                } else {
+                    _addToCartResult.value = Pair(success, message ?: "Failed to add item to cart.")
+                }
+            }
+        }
     }
 }

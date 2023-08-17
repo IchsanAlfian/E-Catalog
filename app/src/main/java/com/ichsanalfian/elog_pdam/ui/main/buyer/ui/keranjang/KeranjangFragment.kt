@@ -6,11 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ichsanalfian.elog_pdam.R
 import com.ichsanalfian.elog_pdam.databinding.FragmentKeranjangBinding
+import com.ichsanalfian.elog_pdam.local.UserPreferences
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerActivity
 import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerViewModel
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerAdapter
 import com.ichsanalfian.elog_pdam.ui.main.seller.detail.DetailProdukActivity
@@ -53,6 +57,29 @@ class KeranjangFragment : Fragment() {
                 println("KOSONG")
             }
         }
+
+        binding.btnCheckout.setOnClickListener {
+            val userId = UserPreferences.user.id.toString()
+            keranjangViewModel.moveToHistory(userId)
+            Toast.makeText(requireContext(),"Produk anda telah terCheckout", Toast.LENGTH_SHORT).show()
+            keranjangViewModel.moveToHistoryResult.observe(this){
+                if(it.first == true){
+                    startActivity(Intent(requireContext(), BuyerActivity::class.java))
+
+                }
+            }
+
+        }
+
+//        keranjangViewModel.moveToHistoryResult.observe(viewLifecycleOwner) { result ->
+//            val (success, message) = result
+//            if (success) {
+//                Toast.makeText(requireContext(),message, Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+//            }
+//
+//        }
     }
 
     override fun onDestroyView() {

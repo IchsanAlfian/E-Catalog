@@ -10,6 +10,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
+
 interface ApiService {
     @GET("get_barang_auth.php") //TODO Diganti, dipakai di buyer view
     fun getBarangAuth(
@@ -60,11 +61,40 @@ interface ApiService {
     @POST("add_cart.php")
     fun addToCart(
         @Field("id_barang") idBarang: Int,
-        @Field("jumlah") jumlah: Int
+        @Field("jumlah") jumlah: Int,
+        @Field("id_user") id_user: String,
+    ): Call<MessageResponse>
+
+    @FormUrlEncoded
+    @POST("update_jumlah_keranjang.php")
+    fun update_jumlah_keranjang(
+        @Field("id_barang") idBarang: Int,
+        @Field("jumlah") jumlah: Int,
+        @Field("id_user") id_user: String,
     ): Call<MessageResponse>
 
     @GET("get_keranjang.php")
-    fun getKeranjang(@Query("id") id : String? = UserPreferences.user.id,
+    fun getKeranjang(
+        @Query("id") id: String? = UserPreferences.user.id,
     ): Call<GetBarangResponse>
+
+    @FormUrlEncoded
+    @POST("riwayat.php")
+    fun riwayat(
+        @Field("id_user") id_user: String
+    ): Call<MessageResponse>
+
+    @GET("get_riwayat.php")
+    fun getRiwayat(
+        @Query("id") id: String? = UserPreferences.user.id,
+    ): Call<GetBarangResponse>
+
+    @GET("seller_request.php")
+    fun getSellerRequestByIdSeller(
+        @Query("id_seller") id_seller: String? = UserPreferences.user.id, // Menggunakan "id_seller" sebagai parameter
+    ): Call<GetBarangResponse>
+
+
+
 
 }

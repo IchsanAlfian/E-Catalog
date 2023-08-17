@@ -3,10 +3,13 @@ package com.ichsanalfian.elog_pdam.ui.main.seller.detail
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -15,7 +18,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.ichsanalfian.elog_pdam.BuildConfig
 import com.ichsanalfian.elog_pdam.R
 import com.ichsanalfian.elog_pdam.databinding.ActivityDetailProdukBinding
+import com.ichsanalfian.elog_pdam.local.UserPreferences
+import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerActivity
+import com.ichsanalfian.elog_pdam.ui.main.buyer.ui.keranjang.KeranjangFragment
 import com.ichsanalfian.elog_pdam.ui.main.seller.SellerActivity
+import com.ichsanalfian.elog_pdam.ui.main.seller.add.TambahBarangActivity
 import com.ichsanalfian.elog_pdam.ui.main.seller.update.UpdateBarangActivity
 
 import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
@@ -37,6 +44,8 @@ class DetailProdukActivity : AppCompatActivity() {
     private var deskripsiProduk: String? = null
     private var gambarProduk: String? = null
     private var idProduk: Int = 0
+    private var page: Int = 0
+    private var jumlahKeranjang: Int = 0
     companion object {
         const val EXTRA_ID = "extra_id"
         const val EXTRA_NAMA = "extra_nama"
@@ -49,6 +58,10 @@ class DetailProdukActivity : AppCompatActivity() {
         const val EXTRA_UKURAN = "extra_ukuran"
         const val EXTRA_DESKRIPSI = "extra_deskripsi"
         const val EXTRA_GAMBAR = "extra_gambar" //TODO Tambahan
+        const val EXTRA_JUMLAH_KERANJANG = "extra_jumlah_keranjang"
+        //page mana si
+        const val EXTRA_PAGE = "extra_page"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +69,7 @@ class DetailProdukActivity : AppCompatActivity() {
         binding = ActivityDetailProdukBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
+
 
         // Ambil data dari intent
         namaProduk = intent.getStringExtra(EXTRA_NAMA)
@@ -69,6 +83,8 @@ class DetailProdukActivity : AppCompatActivity() {
         deskripsiProduk = intent.getStringExtra(EXTRA_DESKRIPSI)
         gambarProduk = intent.getStringExtra(EXTRA_GAMBAR) //TODO Tambahan
         idProduk = intent.getIntExtra(EXTRA_ID, 0)
+        page = intent.getIntExtra(EXTRA_PAGE, 0)
+        jumlahKeranjang = intent.getIntExtra(EXTRA_JUMLAH_KERANJANG, 0)
 
         // Tampilkan data pada layout menggunakan data binding
         binding.apply {
@@ -81,6 +97,57 @@ class DetailProdukActivity : AppCompatActivity() {
             textViewKategoriProduk.text = kategoriProduk
             textViewUkuranProduk.text = ukuranProduk
             textViewDeskripsiProduk.text = deskripsiProduk
+
+
+            if (page == 1){
+                buttonTambahKeranjang.visibility = View.VISIBLE
+                editTextJumlahstok.visibility = View.VISIBLE
+                buttonTambahKeranjang.setOnClickListener {
+                    val jumlahStok = binding.editTextJumlahstok.text.toString().toIntOrNull()
+                    if (jumlahStok != null && jumlahStok > 0) {
+                        val userId = UserPreferences.user.id.toString()
+                        sellerViewModel.addToCart(idProduk, jumlahStok, userId)
+
+                    } else {
+
+                    }
+                }
+                sellerViewModel.addToCartResult.observe(this@DetailProdukActivity) { result ->
+                    val (success, message) = result
+                    if (success) {
+                        Toast.makeText(this@DetailProdukActivity, message, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@DetailProdukActivity, message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            else if (page == 0){
+                val stokEditable = Editable.Factory.getInstance().newEditable(jumlahKeranjang.toString())
+                editTextJumlahstok.text = stokEditable
+                buttonTambahKeranjang.text = "Update Jumlah"
+                buttonTambahKeranjang.setOnClickListener{
+                    binding.editTextJumlahstok.text.toString().toIntOrNull()?.let {
+                        sellerViewModel.update_jumlah_barang(idProduk,
+                            it, UserPreferences.user.id.toString())
+                        //kasih intent
+
+                    }
+                }
+                sellerViewModel.update.observe(this@DetailProdukActivity) { result ->
+                    val (success, message) = result
+                    if (success) {
+                        Toast.makeText(this@DetailProdukActivity, message, Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@DetailProdukActivity, BuyerActivity::class.java))
+
+                    } else {
+                        Toast.makeText(this@DetailProdukActivity, message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            else{
+                buttonTambahKeranjang.visibility = View.GONE
+                editTextJumlahstok.visibility = View.GONE
+            }
             //TODO Tambahan
             Glide.with(applicationContext).load("${BuildConfig.BASE_URL}${gambarProduk}")
                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -89,33 +156,37 @@ class DetailProdukActivity : AppCompatActivity() {
                 .into(imageViewProduk)
         }
 
-        binding.buttonTambahKeranjang.setOnClickListener {
-            val jumlahStok = binding.editTextJumlahstok.text.toString().toIntOrNull()
-            if (jumlahStok != null && jumlahStok > 0) {
-                sellerViewModel.addToCart(idProduk, jumlahStok)
-                Toast.makeText(this, idProduk.toString(), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Masukkan jumlah stok yang valid.", Toast.LENGTH_SHORT).show()
-            }
-        }
+
+//        binding.buttonTambahKeranjang.setOnClickListener {
+//
+//                val jumlahStok = binding.editTextJumlahstok.text.toString().toIntOrNull()
+//                if (jumlahStok != null && jumlahStok > 0) {
+//                    val userId = UserPreferences.user.id.toString()
+//                    sellerViewModel.addToCart(idProduk, jumlahStok, userId)
+//                    Toast.makeText(this, UserPreferences.user.id.toString(), Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(this, "Masukkan jumlah stok yang valid.", Toast.LENGTH_SHORT).show()
+//                }
+//
+//
+//        }
 
         // Observe the addToCartResult LiveData
-        sellerViewModel.addToCartResult.observe(this) { result ->
-            val (success, message) = result
-            if (success) {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-            }
-        }
+
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_detail, menu)
+        if (UserPreferences.user.role=="seller"){
+            menuInflater.inflate(R.menu.menu_detail, menu)
+        }
+
         return super.onCreateOptionsMenu(menu)
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         return when (item.itemId) {
             R.id.action_delete -> {
                 val alertDialog = AlertDialog.Builder(this)

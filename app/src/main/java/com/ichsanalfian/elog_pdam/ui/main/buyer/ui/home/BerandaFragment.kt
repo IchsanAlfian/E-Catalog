@@ -23,7 +23,7 @@ class BerandaFragment : Fragment() {
 
     private var binding: FragmentBerandaBinding? = null
     private lateinit var buyerViewModel: BuyerViewModel
-    private lateinit var sellerAdapter: SellerAdapter
+    private lateinit var sellerAdapter: BerandaAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +35,7 @@ class BerandaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sellerAdapter = SellerAdapter()
+        sellerAdapter = BerandaAdapter()
 
         // Gunakan GridLayoutManager dengan 2 kolom
         binding?.rvProdukBuyer?.apply {

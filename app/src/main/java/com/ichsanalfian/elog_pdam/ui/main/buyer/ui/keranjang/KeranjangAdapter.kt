@@ -59,7 +59,8 @@ class KeranjangAdapter:
                 intent.putExtra(DetailProdukActivity.EXTRA_DESKRIPSI, barang.deskripsi)
                 intent.putExtra(DetailProdukActivity.EXTRA_GAMBAR, barang.gambar)
                 intent.putExtra(DetailProdukActivity.EXTRA_ID, barang.id)
-
+                intent.putExtra(DetailProdukActivity.EXTRA_PAGE, 0)
+                intent.putExtra(DetailProdukActivity.EXTRA_JUMLAH_KERANJANG, barang.jumlah)
                 itemView.context.startActivity(intent)
             }
         }

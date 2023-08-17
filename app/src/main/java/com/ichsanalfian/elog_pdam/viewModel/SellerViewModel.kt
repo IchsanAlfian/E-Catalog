@@ -47,9 +47,9 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
     private val _addToCartResult = MutableLiveData<Pair<Boolean, String>>()
     val addToCartResult: LiveData<Pair<Boolean, String>> get() = _addToCartResult
 
-    fun addToCart(idBarang: Int, jumlah: Int) {
+    fun addToCart(idBarang: Int, jumlah: Int, id_user :String) {
         viewModelScope.launch {
-            repository.addToCart(idBarang, jumlah) { success, message ->
+            repository.addToCart(idBarang, jumlah, id_user) { success, message ->
                 if (success) {
                     _addToCartResult.value = Pair(success, "Produk berhasil ditambahkan ke keranjang!")
                 } else {
@@ -57,5 +57,28 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
                 }
             }
         }
+    }
+
+    private val _update = MutableLiveData<Pair<Boolean, String>>()
+    val update: LiveData<Pair<Boolean, String>> get() = _update
+
+    fun update_jumlah_barang(idBarang: Int, jumlah: Int, id_user :String) {
+        viewModelScope.launch {
+            repository.update_jumlah_barang(idBarang, jumlah, id_user) { success, message ->
+                if (success) {
+                    _update.value = Pair(success, "Produk berhasil diupdate ke keranjang!")
+                } else {
+                    _update.value = Pair(success, message)
+                }
+            }
+        }
+    }
+
+    fun getRequestSeller() {
+        repository.setBarangRequestSeller()
+    }
+
+    fun getRiwayat() {
+        repository.setBarangRiwayat()
     }
 }
