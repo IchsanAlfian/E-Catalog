@@ -1,20 +1,15 @@
 package com.ichsanalfian.elog_pdam.di
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import com.ichsanalfian.elog_pdam.api.ApiConfig
 import com.ichsanalfian.elog_pdam.api.ApiService
 import com.ichsanalfian.elog_pdam.local.UserPreferences
-import com.ichsanalfian.elog_pdam.model.Barang
-import com.ichsanalfian.elog_pdam.model.GetBarangResponse
-import com.ichsanalfian.elog_pdam.model.LoginResponse
-import com.ichsanalfian.elog_pdam.model.MessageResponse
+import com.ichsanalfian.elog_pdam.model.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -26,6 +21,8 @@ import retrofit2.Response
 import java.io.File
 
 class Repository(private val api : ApiService) {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
     fun register(username: String, password: String, perusahaan: String){ //TODO Tambahan
         val data = JsonObject().apply {
@@ -33,6 +30,7 @@ class Repository(private val api : ApiService) {
             addProperty("pass", password)
             addProperty("perusahaan", perusahaan)
         }
+        _isLoading.value = true
         val client = ApiConfig.getApiService().register(data)
         client.enqueue(object : Callback<MessageResponse> {
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
@@ -45,6 +43,7 @@ class Repository(private val api : ApiService) {
 
                     Log.e("Repo register gagal", "Error: $error")
                 }
+                _isLoading.value = false
             }
 
             override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
@@ -59,7 +58,7 @@ class Repository(private val api : ApiService) {
             addProperty("username", username)
             addProperty("password", password)
         }
-
+        _isLoading.value = true
         val client = ApiConfig.getApiService().login(data)
         client.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -75,6 +74,7 @@ class Repository(private val api : ApiService) {
 
                     Log.e("Repo login gagal", "Error: $error")
                 }
+                _isLoading.value = false
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
@@ -95,40 +95,8 @@ class Repository(private val api : ApiService) {
         return barang
     }
 
-    fun setBarangBuyer() {
-        val client = ApiConfig.getApiService().getBarangAuth()
-        client.enqueue(object : Callback<GetBarangResponse> {
-            override fun onResponse(
-                call: Call<GetBarangResponse>,
-                response: Response<GetBarangResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val getBarangResponse = response.body()
-                    if (getBarangResponse != null && !getBarangResponse.error) {
-                        val barangList = getBarangResponse.listBarang
-                        if (barangList != null) {
-                            barang.value = barangList
-                            println(barang.value.toString())
-                        } else{
-                            println("NULL NGAB")
-                        }
-                    } else {
-                        Log.e("Repository setBarang", "Error: ${response.message()}")
-                    }
-                } else {
-                    Log.e("Repository setBarang", "Error: ${response.message()}")
-                }
-            }
-
-            override fun onFailure(call: Call<GetBarangResponse>, t: Throwable) {
-                Log.d("Fail", t.message.toString())
-                t.printStackTrace()
-            }
-
-        })
-    }
-
     fun setBarang() {
+        _isLoading.value = true
         val client = ApiConfig.getApiService().getBarangbySellerID()
         client.enqueue(object : Callback<GetBarangResponse> {
             override fun onResponse(
@@ -139,12 +107,10 @@ class Repository(private val api : ApiService) {
                     val getBarangResponse = response.body()
                     if (getBarangResponse != null && !getBarangResponse.error) {
                         val barangList = getBarangResponse.listBarang
-                        if (barangList != null) {
-                            barang.value = barangList
-                            println(barang.value.toString())
-                        } else{
-                            println("NULL NGAB")
-                        }
+                        _isLoading.value = false
+                        barang.value = barangList
+                        println(barang.value.toString())
+
                     } else {
                         Log.e("Repository setBarang", "Error: ${response.message()}")
                     }
@@ -154,6 +120,7 @@ class Repository(private val api : ApiService) {
             }
 
             override fun onFailure(call: Call<GetBarangResponse>, t: Throwable) {
+                _isLoading.value = false
                 Log.d("Fail", t.message.toString())
                 t.printStackTrace()
             }
@@ -238,7 +205,7 @@ class Repository(private val api : ApiService) {
         })
     }
 
-    fun updateBarang(id: Int, barang: Barang, imageFile: File?) {
+    fun updateBarang(barang: Barang, imageFile: File?) {
         val data = JsonObject().apply {
             addProperty("id", barang.id) // ID produk yang akan diupdate
             addProperty("nama", barang.nama)
@@ -266,7 +233,7 @@ class Repository(private val api : ApiService) {
         }
 
         // Panggil endpoint updateBarang di ApiService
-        val client = ApiConfig.getApiService().updateBarang(id, req, imagePart)
+        val client = ApiConfig.getApiService().updateBarang(req, imagePart)
         client.enqueue(object : Callback<MessageResponse> {
             override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
                 if (response.isSuccessful) {
@@ -286,6 +253,260 @@ class Repository(private val api : ApiService) {
                 t.printStackTrace()
                 // Handle failure in update, for example, show a failure dialog or perform other actions
             }
+        })
+    }
+
+    fun setBarangBuyer() {
+        _isLoading.value = true
+        val client = ApiConfig.getApiService().getBarangAuth()
+        client.enqueue(object : Callback<GetBarangResponse> {
+            override fun onResponse(
+                call: Call<GetBarangResponse>,
+                response: Response<GetBarangResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val getBarangResponse = response.body()
+                    if (getBarangResponse != null && !getBarangResponse.error) {
+                        val barangList = getBarangResponse.listBarang
+                        if (barangList != null) {
+                            _isLoading.value = false
+                            barang.value = barangList
+                            println(barang.value.toString())
+                        } else{
+                            println("NULL NGAB")
+                        }
+                    } else {
+                        Log.e("Repository setBarang", "Error: ${response.message()}")
+                    }
+                } else {
+                    Log.e("Repository setBarang", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetBarangResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    val verif = MutableLiveData<List<VerifSellerData>?>()
+
+    fun getLiveVerifList(): LiveData<List<VerifSellerData>?> {
+        return verif
+    }
+
+    fun setVerifList() {
+        _isLoading.value = true
+        val client = ApiConfig.getApiService().getVerifList()
+        client.enqueue(object : Callback<VerifApprovedResponse> {
+            override fun onResponse(
+                call: Call<VerifApprovedResponse>,
+                response: Response<VerifApprovedResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val verifResponse = response.body()
+                    if (verifResponse != null && !verifResponse.error) {
+                        val verifList = verifResponse.listVerifSellerData
+                        _isLoading.value = false
+                        verif.value = verifList
+
+                    } else {
+                        Log.e("Repository setVerif", "Error: ${response.message()}")
+                    }
+                } else {
+                    Log.e("Repository setVerif", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<VerifApprovedResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    fun postVerif(verifSellerData: VerifSellerData, logo: File, ktp: File) {
+        val data = JsonObject().apply {
+            addProperty("id_seller", UserPreferences.user.id)
+            addProperty("namaPerusahaan", verifSellerData.namaPerusahaan)
+            addProperty("alamat", verifSellerData.alamat)
+            addProperty("logo", verifSellerData.logo)
+            addProperty("namaDirektur", verifSellerData.namaDirektur)
+            addProperty("ktpDirektur", verifSellerData.ktpDirektur)
+            addProperty("noTelp", verifSellerData.noTelp)
+            addProperty("noWA", verifSellerData.noWA)
+            addProperty("email", verifSellerData.email)
+            addProperty("npwp", verifSellerData.npwp)
+            addProperty("bidangUsaha", verifSellerData.bidangUsaha)
+            addProperty("nib", verifSellerData.nib)
+            addProperty("kbli", verifSellerData.kbli)
+        }
+
+        val req = Gson().toJson(data).toRequestBody("application/json".toMediaType())
+        // Convert the image file to a RequestBody
+        val imageRequestBodyLogo = logo.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePartLogo = MultipartBody.Part.createFormData("logo", logo.name, imageRequestBodyLogo)
+
+        val imageRequestBodyKTP = ktp.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePartKTP = MultipartBody.Part.createFormData("ktp", ktp.name, imageRequestBodyKTP)
+
+        // Send the data and image in the multipart request
+        val client = ApiConfig.getApiService().postVerif(data = req, logo = imagePartLogo, ktp = imagePartKTP)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("Repo postVerif sukses", "Msg: ${response.body().toString()}")
+                } else {
+//                    val gson = GsonBuilder().setLenient().create()
+//                    val error = gson.fromJson(response.errorBody()?.toString(), MessageResponse::class.java)
+//                    response.errorBody()?.close()
+
+                    Log.e("Repo postVerif gagal", "Error: ${response.body().toString()}")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+        })
+    }
+
+    val approved = MutableLiveData<List<VerifSellerData>?>()
+
+    fun getLiveApprovedList(): LiveData<List<VerifSellerData>?> {
+        return approved
+    }
+
+    fun setApprovedList() {
+        _isLoading.value = true
+        val client = ApiConfig.getApiService().getApprovedList()
+        client.enqueue(object : Callback<VerifApprovedResponse> {
+            override fun onResponse(
+                call: Call<VerifApprovedResponse>,
+                response: Response<VerifApprovedResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val approvedResponse = response.body()
+                    if (approvedResponse != null && !approvedResponse.error) {
+                        val approvedList = approvedResponse.listVerifSellerData
+                        _isLoading.value = false
+                        approved.value = approvedList
+                    } else {
+                        Log.e("Repository setApproved", "Error: ${response.message()}")
+                    }
+                } else {
+                    Log.e("Repository setApproved", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<VerifApprovedResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    val messageResponse = MutableLiveData<MessageResponse>()
+
+    fun approving(id: String?){
+        val client = ApiConfig.getApiService().approving(id)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(
+                call: Call<MessageResponse>,
+                response: Response<MessageResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("Repo approving merespon", "Msg: ${response.body().toString()}")
+                    if (response.body() != null){
+                        messageResponse.postValue(response.body())
+                    }
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), LoginResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo approving gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    fun rejecting(id: String?, alasan: String?){
+        val client = ApiConfig.getApiService().rejecting(id, alasan)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(
+                call: Call<MessageResponse>,
+                response: Response<MessageResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("Repo rejecting merespon", "Msg: ${response.body().toString()}")
+                    if (response.body() != null){
+                        messageResponse.postValue(response.body())
+                    }
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), LoginResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo rejecting gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    val reason = MutableLiveData<MessageResponse>()
+
+    fun getLiveReason() : LiveData<MessageResponse> = reason
+
+    fun getReasonReject(){
+        val client = ApiConfig.getApiService().getReasonReject()
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(
+                call: Call<MessageResponse>,
+                response: Response<MessageResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("Repo getReason merespon", "Msg: ${response.body().toString()}")
+                    if (response.body() != null){
+                        reason.postValue(response.body())
+                    }
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), LoginResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo getReason gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
         })
     }
 
@@ -340,6 +561,7 @@ class Repository(private val api : ApiService) {
 
 
     fun setBarangKeranjang() {
+        _isLoading.value = true
         val client = ApiConfig.getApiService().getKeranjang()
         client.enqueue(object : Callback<GetBarangResponse> {
             override fun onResponse(
@@ -350,12 +572,10 @@ class Repository(private val api : ApiService) {
                     val getBarangResponse = response.body()
                     if (getBarangResponse != null && !getBarangResponse.error) {
                         val barangList = getBarangResponse.listBarang
-                        if (barangList != null) {
-                            barang.value = barangList
-                            println(barang.value.toString())
-                        } else{
-                            println("NULL NGAB")
-                        }
+                        barang.value = barangList
+                        println(barang.value.toString())
+                        _isLoading.value = false
+
                     } else {
                         Log.e("Repository setBarang", "Error: ${response.message()}")
                     }
@@ -396,6 +616,7 @@ class Repository(private val api : ApiService) {
     }
 
     fun setBarangRiwayat() {
+        _isLoading.value = true
         val client = ApiConfig.getApiService().getRiwayat()
         client.enqueue(object : Callback<GetBarangResponse> {
             override fun onResponse(
@@ -406,12 +627,10 @@ class Repository(private val api : ApiService) {
                     val getBarangResponse = response.body()
                     if (getBarangResponse != null && !getBarangResponse.error) {
                         val barangList = getBarangResponse.listBarang
-                        if (barangList != null) {
-                            barang.value = barangList
-                            println(barang.value.toString())
-                        } else{
-                            println("NULL NGAB")
-                        }
+                        barang.value = barangList
+                        println(barang.value.toString())
+                        _isLoading.value = false
+
                     } else {
                         Log.e("Repository setBarang", "Error: ${response.message()}")
                     }
@@ -429,6 +648,7 @@ class Repository(private val api : ApiService) {
     }
 
     fun setBarangRequestSeller() {
+        _isLoading.value = true
         val client = ApiConfig.getApiService().getSellerRequestByIdSeller()
         client.enqueue(object : Callback<GetBarangResponse> {
             override fun onResponse(
@@ -439,12 +659,10 @@ class Repository(private val api : ApiService) {
                     val getBarangResponse = response.body()
                     if (getBarangResponse != null && !getBarangResponse.error) {
                         val barangList = getBarangResponse.listBarang
-                        if (barangList != null) {
-                            barang.value = barangList
-                            println(barang.value.toString())
-                        } else{
-                            println("NULL NGAB")
-                        }
+                        _isLoading.value = false
+                        barang.value = barangList
+                        println(barang.value.toString())
+
                     } else {
                         Log.e("Repository setBarang", "Error: ${response.message()}")
                     }
@@ -460,7 +678,64 @@ class Repository(private val api : ApiService) {
 
         })
     }
+
+    fun sending(idSeller : String?, id: String?){
+        val client = ApiConfig.getApiService().sending(idSeller,id)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(
+                call: Call<MessageResponse>,
+                response: Response<MessageResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("Repo sending merespon", "Msg: ${response.body().toString()}")
+                    if (response.body() != null){
+                        messageResponse.postValue(response.body())
+                    }
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), LoginResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo sending gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
+
+    fun diterima(idSeller : String?, id: String?){
+        val client = ApiConfig.getApiService().diterima(idSeller,id)
+        client.enqueue(object : Callback<MessageResponse> {
+            override fun onResponse(
+                call: Call<MessageResponse>,
+                response: Response<MessageResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.e("Repo diterima merespon", "Msg: ${response.body().toString()}")
+                    if (response.body() != null){
+                        messageResponse.postValue(response.body())
+                    }
+                } else {
+                    val gson = GsonBuilder().setLenient().create()
+                    val error = gson.fromJson(response.errorBody()?.toString(), LoginResponse::class.java)
+                    response.errorBody()?.close()
+
+                    Log.e("Repo diterima gagal", "Error: $error")
+                }
+            }
+
+            override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                _isLoading.value = false
+                Log.d("Fail", t.message.toString())
+                t.printStackTrace()
+            }
+
+        })
+    }
 }
-
-
-

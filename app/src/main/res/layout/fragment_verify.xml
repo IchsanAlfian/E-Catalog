@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Input Nama -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nama_perusahaan" />
+
+        <EditText
+            android:id="@+id/editTextNamaPerusahaan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Input Merk -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alamat" />
+
+        <EditText
+            android:id="@+id/editTextAlamat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Tombol untuk Upload Foto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logo_perusahaan" />
+        <!-- Input Kode -->
+
+        <!-- Tempat untuk Menampilkan Foto -->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageViewLogo"
+                android:layout_width="155dp"
+                android:layout_height="139dp"
+                android:src="@drawable/baseline_image_24" />
+
+            <Button
+                android:id="@+id/buttonUploadLogo"
+                android:layout_width="109dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:text="@string/choose_files" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nama_direktur" />
+
+        <EditText
+            android:id="@+id/editTextNamaDir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Tombol untuk Upload Foto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ktp_direktur" />
+        <!-- Input Kode -->
+
+        <!-- Tempat untuk Menampilkan Foto -->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageViewKTP"
+                android:layout_width="155dp"
+                android:layout_height="139dp"
+                android:src="@drawable/baseline_image_24" />
+
+            <Button
+                android:id="@+id/buttonUploadKTP"
+                android:layout_width="109dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:text="@string/choose_files" />
+        </LinearLayout>
+
+        <!-- Input Harga -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_telp" />
+
+        <EditText
+            android:id="@+id/editTextTelp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+
+        <!-- Input Satuan -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_wa" />
+
+        <EditText
+            android:id="@+id/editTextWA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"/>
+
+        <!-- Input Stok -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email" />
+
+        <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" />
+
+        <!-- Input Kategori -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/npwp" />
+
+        <EditText
+            android:id="@+id/editTextNPWP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Input Ukuran -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bidang_usaha" />
+
+        <EditText
+            android:id="@+id/editTextBidangUsaha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Input Deskripsi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nib" />
+
+        <EditText
+            android:id="@+id/editTextNIB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" />
+
+        <!-- Input Deskripsi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/KBLI" />
+
+        <EditText
+            android:id="@+id/editTextKBLI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" />
+
+        <!-- Tombol untuk Simpan Barang -->
+        <Button
+            android:id="@+id/buttonVerif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,21 +1,16 @@
 package com.ichsanalfian.elog_pdam.ui.main.buyer.ui.riwayat
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ichsanalfian.elog_pdam.databinding.FragmentKeranjangBinding
+import com.ichsanalfian.elog_pdam.adapter.LinearAdapter
 import com.ichsanalfian.elog_pdam.databinding.FragmentRiwayatBinding
-import com.ichsanalfian.elog_pdam.local.UserPreferences
-import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerActivity
-import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerViewModel
-import com.ichsanalfian.elog_pdam.ui.main.buyer.ui.keranjang.KeranjangAdapter
+import com.ichsanalfian.elog_pdam.viewModel.BuyerViewModel
 import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
 
 
@@ -23,8 +18,8 @@ class RiwayatFragment : Fragment() {
 
     private var _binding: FragmentRiwayatBinding? = null
 
-    private lateinit var keranjangViewModel: BuyerViewModel
-    private lateinit var keranjangAdapter: RiwayatAdapter
+    private lateinit var buyerViewModel: BuyerViewModel
+    private lateinit var linearAdapter: LinearAdapter
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -40,27 +35,43 @@ class RiwayatFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        keranjangAdapter =RiwayatAdapter()
+        linearAdapter = LinearAdapter(2)
 
-
+        val layout = LinearLayoutManager(requireContext())
         binding.rvRiwayat.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = keranjangAdapter
+            layoutManager = layout
+            adapter = linearAdapter
+            setHasFixedSize(true)
+            addItemDecoration(DividerItemDecoration(requireContext(), layout.orientation))
         }
 
-        keranjangViewModel = ViewModelProvider(this, ViewModelFactory())[BuyerViewModel::class.java]
-        keranjangViewModel.getRiwayat()
-        keranjangViewModel.getBarang().observe(viewLifecycleOwner) { keranjangList ->
+        buyerViewModel = ViewModelProvider(this, ViewModelFactory())[BuyerViewModel::class.java]
+        buyerViewModel.getRiwayat()
+        buyerViewModel.getBarang().observe(viewLifecycleOwner) { keranjangList ->
             if (keranjangList != null) {
-                keranjangAdapter.submitList(keranjangList)
+                linearAdapter.submitList(keranjangList)
             } else {
                 println("KOSONG")
+                binding.emptyData4.visibility = View.VISIBLE
             }
+        }
+
+        buyerViewModel.isLoad().observe(viewLifecycleOwner){
+            showLoading(it)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showLoading(state: Boolean){
+//        if (state) View.VISIBLE else View.GONE
+        if (state){
+            binding.progressBar3.visibility = View.VISIBLE
+        } else{
+            binding.progressBar3.visibility = View.GONE
+        }
     }
 }

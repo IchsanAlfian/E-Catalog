@@ -4,30 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.ichsanalfian.elog_pdam.R
+import com.ichsanalfian.elog_pdam.adapter.GridAdapter
 import com.ichsanalfian.elog_pdam.databinding.FragmentBerandaBinding
-import com.ichsanalfian.elog_pdam.databinding.FragmentProdukBinding
-import com.ichsanalfian.elog_pdam.ui.main.buyer.BuyerViewModel
-import com.ichsanalfian.elog_pdam.ui.main.seller.SellerAdapter
 import com.ichsanalfian.elog_pdam.viewModel.SellerViewModel
 import com.ichsanalfian.elog_pdam.viewModel.ViewModelFactory
 
 
 class BerandaFragment : Fragment() {
 
-    private var binding: FragmentBerandaBinding? = null
-    private lateinit var buyerViewModel: BuyerViewModel
-    private lateinit var sellerAdapter: BerandaAdapter
+    private lateinit var binding: FragmentBerandaBinding
+    private lateinit var sellerViewModel: SellerViewModel
+    private lateinit var sellerAdapter: GridAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
         binding = FragmentBerandaBinding.inflate(inflater, container, false)
         return binding!!.root
@@ -35,7 +32,7 @@ class BerandaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sellerAdapter = BerandaAdapter()
+        sellerAdapter = GridAdapter(1)
 
         // Gunakan GridLayoutManager dengan 2 kolom
         binding?.rvProdukBuyer?.apply {
@@ -43,14 +40,18 @@ class BerandaFragment : Fragment() {
             adapter = sellerAdapter
         }
 
-        buyerViewModel = ViewModelProvider(this, ViewModelFactory())[BuyerViewModel::class.java]
-        buyerViewModel.setBarangBuyer()
-        buyerViewModel.getBarang().observe(viewLifecycleOwner) { listBarang ->
+        sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
+        sellerViewModel.setBarangBuyer()
+        sellerViewModel.getBarang().observe(viewLifecycleOwner) { listBarang ->
             if (listBarang != null) {
                 sellerAdapter.submitList(listBarang)
             } else {
                 println("LIST NULL NGABS!!")
+                binding.emptyData2.visibility = View.VISIBLE
             }
+        }
+        sellerViewModel.isLoad().observe(viewLifecycleOwner){
+            showLoading(it)
         }
 
         // Panggil fungsi untuk mengatur search bar di Toolbar
@@ -81,12 +82,19 @@ class BerandaFragment : Fragment() {
 
     private fun performSearch(query: String) {
         // Lakukan pencarian berdasarkan query di view model
-        buyerViewModel.searchBarang(query).observe(viewLifecycleOwner, Observer { listBarang ->
+        sellerViewModel.searchBarang(query).observe(viewLifecycleOwner, Observer { listBarang ->
             listBarang?.let {
                 sellerAdapter.submitList(it)
             }
         })
     }
 
-
+    private fun showLoading(state: Boolean){
+//        if (state) View.VISIBLE else View.GONE
+        if (state){
+            binding?.progressBar?.visibility = View.VISIBLE
+        } else{
+            binding?.progressBar?.visibility = View.GONE
+        }
+    }
 }

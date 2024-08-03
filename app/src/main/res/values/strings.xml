@@ -16,6 +16,12 @@
     <string name="login_page">Login Page</string>
     <string name="search">Search</string>
     <string name="empty_data">Belum ada barang yang diupload kesini</string>
+    <string name="empty_data_req">Belum ada barang yang di-request</string>
+    <string name="empty_data_keranjang">Keranjang kamu kosong</string>
+    <string name="empty_data_riwayat">Kamu belum melakukan\ntransaksi apapun</string>
+    <string name="empty_data_waiting">Belum ada data verifikasi yang masuk</string>
+    <string name="empty_data_approved">Belum ada data verifikasi yang di-approved</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_buyer">BuyerActivity</string>
@@ -26,4 +32,38 @@
     <string name="title_keranjang">Keranjang</string>
     <string name="title_riwayat">Riwayat</string>
     <string name="title_beranda">Beranda</string>
+    <string name="logout">Log Out</string>
+    <string name="belum_verif">Anda belum melakukan verifikasi sebagai seller</string>
+    <string name="verify">Verifikasi</string>
+    <string name="verify_again">Verifikasi Lagi</string>
+
+    <string name="pending">Data anda sedang dalam tahap verifikasi oleh admin. \n\nMohon cek secara berkala.</string>
+    <string name="rejected">Data anda ditolak oleh admin.</string>
+
+    <string name="nama_perusahaan">Nama Perusahaan</string>
+    <string name="alamat">Alamat</string>
+    <string name="logo_perusahaan">"Logo"</string>
+    <string name="choose_files">Choose Files</string>
+    <string name="nama_direktur">Nama Direktur</string>
+    <string name="ktp_direktur">KTP Direktur</string>
+    <string name="no_telp">No. Telp</string>
+    <string name="no_wa">No. WA</string>
+    <string name="email">Email</string>
+    <string name="bidang_usaha">Bidang Usaha</string>
+    <string name="nib">NIB</string>
+    <string name="KBLI">KBLI</string>
+    <string name="npwp">NPWP</string>
+    <string name="tgl_submit">Tanggal Submit</string>
+    <string name="tgl_approved">Tanggal Approved</string>
+    <string name="tgl_cekout">Checkout :\nDD-MM-YYYY\nHH-MM</string>
+
+    <string name="approve">Approve</string>
+    <string name="reject">Reject</string>
+
+    <string name="qty">Qty      : </string>
+    <string name="total">Total: </string>
+
+    <string name="sending">Barang Telah Dikirim</string>
+    <string name="diterima">Barang Telah Diterima</string>
+
 </resources>

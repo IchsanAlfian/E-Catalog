@@ -1,5 +1,6 @@
 package com.ichsanalfian.elog_pdam.viewModel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ichsanalfian.elog_pdam.di.Repository
@@ -20,4 +21,8 @@ class AuthViewModel(private val repository: Repository): ViewModel() { //TODO Ta
     }
 
     fun getDatabyLogin() = repository.getLiveLoginRepsonse()
+
+    fun isLoad(): LiveData<Boolean> {
+        return repository.isLoading
+    }
 }

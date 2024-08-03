@@ -29,9 +29,8 @@ class UpdateBarangActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUpdateBarangBinding
     private var selectedImage: Bitmap? = null
     private lateinit var sellerViewModel: SellerViewModel
-    private lateinit var selectedImageFile: File
+    private var selectedImageFile: File? = null
     private var isImageChanged = false
-    private var isNewImageSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,28 +38,26 @@ class UpdateBarangActivity : AppCompatActivity() {
         setContentView(binding.root)
         sellerViewModel = ViewModelProvider(this, ViewModelFactory())[SellerViewModel::class.java]
 
-
-
         // Get data from intent extras
         val namaProduk = intent.getStringExtra(EXTRA_NAMA)
         val merkProduk = intent.getStringExtra(EXTRA_MERK)
         val kodeProduk = intent.getStringExtra(EXTRA_KODE)
-        val hargaProduk = intent.getStringExtra(EXTRA_HARGA)
+        val hargaProduk = intent.getIntExtra(EXTRA_HARGA, 0)
         val satuanProduk = intent.getStringExtra(EXTRA_SATUAN)
         val stokProduk = intent.getStringExtra(EXTRA_STOK)
         val kategoriProduk = intent.getStringExtra(EXTRA_KATEGORI)
         val ukuranProduk = intent.getStringExtra(EXTRA_UKURAN)
         val deskripsiProduk = intent.getStringExtra(EXTRA_DESKRIPSI)
         val gambarProduk = intent.getStringExtra(EXTRA_GAMBAR) //TODO Tambahan
-        val idProduk = intent.getIntExtra(EXTRA_ID, 0)
-        selectedImageFile = File(gambarProduk)
+        val idProduk = intent.getIntExtra(EXTRA_ID,0)
+        val idSeller = intent.getStringExtra(EXTRA_ID_SELLER)
 
         // Fill the input fields and image view with the data from the intent
         binding.apply {
             editTextNama.setText(namaProduk)
             editTextMerk.setText(merkProduk)
             editTextKode.setText(kodeProduk)
-            editTextHarga.setText(hargaProduk)
+            editTextHarga.setText(hargaProduk.toString())
             editTextSatuan.setText(satuanProduk)
             editTextStok.setText(stokProduk)
             editTextKategori.setText(kategoriProduk)
@@ -68,7 +65,7 @@ class UpdateBarangActivity : AppCompatActivity() {
             editTextDeskripsi.setText(deskripsiProduk)
 
             //TODO Tambahan
-            Glide.with(applicationContext).load("${BuildConfig.BASE_URL}${gambarProduk}")
+            Glide.with(applicationContext).load("${BuildConfig.BASE_URL}uploads/barang/${gambarProduk}")
                 .into(imageViewFoto)
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -80,10 +77,6 @@ class UpdateBarangActivity : AppCompatActivity() {
             // Jika izin sudah diberikan, Anda dapat membuka kamera
         }
         // Load existing image (if any)
-        Glide.with(applicationContext).load("${BuildConfig.BASE_URL}${gambarProduk}")
-            .into(binding.imageViewFoto)
-
-
         binding.buttonUploadFoto.setOnClickListener {
             // Memanggil dialog untuk memilih sumber foto (kamera atau galeri)
             showImagePickerDialog()
@@ -91,7 +84,6 @@ class UpdateBarangActivity : AppCompatActivity() {
 
         binding.buttonSimpan.setOnClickListener {
             // Ambil data dari input dan foto yang telah diunggah
-            val id = intent.getIntExtra(EXTRA_ID, 0)
             val nama = binding.editTextNama.text.toString()
             val merk = binding.editTextMerk.text.toString()
             val kode = binding.editTextKode.text.toString()
@@ -101,13 +93,17 @@ class UpdateBarangActivity : AppCompatActivity() {
             val kategori = binding.editTextKategori.text.toString()
             val ukuran = binding.editTextUkuran.text.toString()
             val deskripsi = binding.editTextDeskripsi.text.toString()
-
+            val barang: Barang
             // ...
             // Panggil fungsi updateBarang pada sellerViewModel dengan menyertakan ID barang
-            val imageName = if (isNewImageSelected) selectedImageFile.name else gambarProduk // Sesuaikan dengan nama variabel yang menyimpan nama file gambar sebelumnya
 
-            val barang = Barang(id, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile.name) // Menggunakan nama file yang dipilih
-            sellerViewModel.updateBarang(id, barang, selectedImageFile)
+            if (isImageChanged){
+                barang = Barang(idProduk, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, selectedImageFile?.name, idSeller) // Menggunakan nama file yang dipilih
+            } else{
+                barang = Barang(idProduk, nama, merk, harga, satuan, kode, stok, kategori, ukuran, deskripsi, gambarProduk, idSeller) // Menggunakan nama file yang dipilih
+            }
+            sellerViewModel.updateBarang(barang, selectedImageFile)
+            println("WKOWKOWKOWKOW $gambarProduk")
             showSuccessDialog()
         }
     }
@@ -124,7 +120,7 @@ class UpdateBarangActivity : AppCompatActivity() {
     }
     private fun saveImageToFile(bitmap: Bitmap?): File {
         // Create a file in the cache directory to store the image
-        val imgName = "${binding.editTextNama.text.toString()}__${binding.editTextKode.text.toString()}.jpg" //TODO Diganti
+        val imgName = "${binding.editTextNama.text}__${binding.editTextKode.text}.jpg" //TODO Diganti
         val file = File(cacheDir, imgName)
         try {
             val stream = FileOutputStream(file)
@@ -175,8 +171,7 @@ class UpdateBarangActivity : AppCompatActivity() {
 
                     // Save the selected image to a file
                     selectedImageFile = saveImageToFile(selectedImage)
-
-                    isNewImageSelected = true // Set isNewImageSelected ke true karena gambar diubah
+                    isImageChanged = true
                 }
                 REQUEST_IMAGE_PICK -> {
                     val imageUri: Uri? = data?.data
@@ -188,8 +183,8 @@ class UpdateBarangActivity : AppCompatActivity() {
 
                             // Save the selected image to a file
                             selectedImageFile = saveImageToFile(selectedImage)
+                            isImageChanged = true
 
-                            isNewImageSelected = true // Set isNewImageSelected ke true karena gambar diubah
                         } catch (e: FileNotFoundException) {
                             e.printStackTrace()
                             Toast.makeText(this, "Gambar tidak ditemukan!", Toast.LENGTH_SHORT).show()
@@ -231,7 +226,6 @@ class UpdateBarangActivity : AppCompatActivity() {
         const val EXTRA_UKURAN = "extra_ukuran"
         const val EXTRA_DESKRIPSI = "extra_deskripsi"
         const val EXTRA_GAMBAR = "extra_gambar" //TODO Tambahan
-
-
+        const val EXTRA_ID_SELLER = "extra_id_seller"
     }
 }

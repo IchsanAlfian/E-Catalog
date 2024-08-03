@@ -23,13 +23,14 @@
 <!--            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />-->
 
         <!-- SearchView for product search -->
+
         <androidx.appcompat.widget.SearchView
 
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Cari Produk..."
             android:iconifiedByDefault="false"
+            android:queryHint="Cari Produk..."
 
             app:defaultQueryHint="Cari Produk..."
             app:iconifiedByDefault="false"
@@ -42,6 +43,7 @@
             app:tabTextColor="@color/white"
             app:tabBackground="@color/abu"
             app:tabIndicatorColor="@color/biru" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
 

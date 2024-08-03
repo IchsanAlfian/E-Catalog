@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="190dp"
-    android:layout_height="190dp">
+    android:layout_height="202dp">
 
     <ImageView
         android:id="@+id/imageView"
@@ -28,24 +28,30 @@
 
     <TextView
         android:id="@+id/tv_namaProduk"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_width="65dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_bold"
         android:text="Pipa Yoi"
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textAlignment="textStart"
+        android:textColor="@color/abu"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
-        android:id="@+id/tv_stokProduk"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:textAlignment="center"
-        android:textColor="@color/biru"
-        android:text="stok : 500"
+        android:id="@+id/tv_hargaProduk"
+        android:layout_width="98dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Rpxxxxxx"
+        android:textAlignment="textStart"
+        android:textColor="@color/oren"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk" />
 

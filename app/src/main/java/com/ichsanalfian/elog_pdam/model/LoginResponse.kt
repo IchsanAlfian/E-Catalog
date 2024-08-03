@@ -22,5 +22,8 @@ data class UserData( //TODO tambahan
     var username: String? = null,
 
     @field:SerializedName("role")
-    var role: String? = null
+    var role: String? = null,
+
+    @field:SerializedName("isVerified")
+    var isVerified: Int? = null
 )

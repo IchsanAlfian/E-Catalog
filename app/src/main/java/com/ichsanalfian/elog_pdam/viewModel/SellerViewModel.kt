@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ichsanalfian.elog_pdam.di.Repository
 import com.ichsanalfian.elog_pdam.model.Barang
+import com.ichsanalfian.elog_pdam.model.VerifSellerData
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -13,6 +14,7 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
     fun getBarang() : LiveData<List<Barang>?> {
         return repository.getLiveBarang()
     }
+
     fun setBarangBuyer(){
         viewModelScope.launch {
             repository.setBarangBuyer()
@@ -35,13 +37,31 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
             repository.deleteBarang(id)
         }
     }
-    fun updateBarang(id: Int, barang: Barang, imageFile: File?) {
-        repository.updateBarang(id ,barang, imageFile)
+    fun updateBarang(barang: Barang, imageFile: File?) {
+        repository.updateBarang(barang, imageFile)
     }
 
     fun searchBarang(query: String): LiveData<List<Barang>> {
         return repository.searchBarang(query)
     }
+
+    fun isLoad(): LiveData<Boolean> {
+        return repository.isLoading
+    }
+
+    fun postVerif(verifSellerData: VerifSellerData, logo: File, ktp: File){
+        viewModelScope.launch {
+            repository.postVerif(verifSellerData, logo, ktp)
+        }
+    }
+
+    fun getReasonReject(){
+        viewModelScope.launch {
+            repository.getReasonReject()
+        }
+    }
+
+    fun getLiveReason() = repository.getLiveReason()
 
     //digantii besuk ja
     private val _addToCartResult = MutableLiveData<Pair<Boolean, String>>()
@@ -75,10 +95,24 @@ class SellerViewModel (private val repository: Repository): ViewModel() {
     }
 
     fun getRequestSeller() {
-        repository.setBarangRequestSeller()
+        viewModelScope.launch {
+            repository.setBarangRequestSeller()
+        }
     }
 
     fun getRiwayat() {
         repository.setBarangRiwayat()
+    }
+
+    fun sending(idSeller : String?, id: String?){
+        viewModelScope.launch {
+            repository.sending(idSeller, id)
+        }
+    }
+
+    fun diterima(idSeller : String?, id: String?){
+        viewModelScope.launch {
+            repository.diterima(idSeller, id)
+        }
     }
 }
